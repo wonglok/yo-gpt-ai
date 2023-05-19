@@ -18,18 +18,17 @@ FROM base as build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install -y python-is-python3 pkg-config build-essential 
+    apt-get install -y python-is-python3 pkg-config build-essential
 
 # Install node modules
-COPY --link package.json package-lock.json yarn.lock ./
-RUN yarn install --frozen-lockfile --production=false
+COPY --link package.json ./
+RUN npm install --frozen-lockfile --production=false
 
 # Copy application code
 COPY --link . .
 
 # Remove development dependencies
-RUN yarn install --production=true
-
+RUN npm install --production=true
 
 # Final stage for app image
 FROM base
@@ -39,4 +38,4 @@ COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "yarn", "run", "start" ]
+CMD [ "npm", "run", "start" ]
