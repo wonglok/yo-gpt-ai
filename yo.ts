@@ -43,10 +43,52 @@ const main = async (myPrompt = "how are you", res) => {
   }
 
   let modelPath = path.join(__dirname, "./model/gpt4all-lora-quantized.bin");
-  if (!fs.existsSync(modelPath)) {
-    await gpt4all.downloadFile(
-      `https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin`,
-      modelPath
+  let hasFile = false;
+  try {
+    hasFile = fs.existsSync(modelPath);
+  } catch (e) {
+    console.log(e);
+  }
+  if (!hasFile) {
+    let download = async (url) => {
+      const { data, headers } = await axios.get(url, {
+        responseType: "stream",
+      });
+      const totalSize = parseInt(headers["content-length"], 10);
+      const progressBar = new ProgressBar("[:bar] :percent :etas", {
+        complete: "=",
+        incomplete: " ",
+        width: 20,
+        total: totalSize,
+      });
+      const dir = new URL(`file://${path.join(__dirname, "./model")}`);
+      await fs.mkdir(dir, { recursive: true }, (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+
+      const writer = fs.createWriteStream(destination);
+
+      data.on("data", (chunk: any) => {
+        progressBar.tick(chunk.length);
+      });
+
+      data.pipe(writer);
+
+      return new Promise((resolve, reject) => {
+        writer.on("finish", resolve);
+        writer.on("error", reject);
+      });
+    };
+
+    // await gpt4all.downloadFile(
+    //   `https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin`,
+    //   modelPath
+    // );
+
+    await download(
+      `https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin`
     );
   }
 
@@ -92,7 +134,7 @@ const io = new Server(server);
 //   main().catch(console.error);
 // });
 
-let gpt4allProm = main();
+let gpt4allProm = main().catch(console.error);
 
 gpt4allProm.then((gpt4all) => {
   let all = "";
