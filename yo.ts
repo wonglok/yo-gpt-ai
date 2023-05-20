@@ -7,7 +7,7 @@ import { promisify } from "util";
 import { exec, spawn } from "child_process";
 import * as fs from "fs";
 
-const main = async () => {
+const main = async (myPrompt = "how are you", res) => {
   // Instantiate GPT4All with default or custom settings
   const gpt4all = new GPT4All("gpt4all-lora-quantized", false); // Default is 'gpt4all-lora-quantized' model
 
@@ -63,7 +63,7 @@ const main = async () => {
   // Initialize and download missing files
   await gpt4all.init();
 
-  console.log("123");
+  console.log("starting");
 
   try {
     // Open the connection with the model
@@ -72,35 +72,9 @@ const main = async () => {
     console.log(e);
   }
 
-  console.log("open");
+  console.log("opened the app");
 
-  let all = "";
-  // @ts-ignore
-  gpt4all.bot.stdout.on("data", (buffer) => {
-    let string = buffer.toString();
-
-    all += string;
-    console.log(all);
-  });
-
-  // Generate a response using a prompt
-  const prompt =
-    "Tell me about how Open Access to AI is going to help humanity.";
-  const response = await gpt4all.prompt(prompt);
-  console.log(`Prompt: ${prompt}`);
-  console.log(`Response: ${response}`);
-
-  console.log("done 1");
-
-  const prompt2 =
-    "Explain to a five year old why AI is nothing to be afraid of.";
-  const response2 = await gpt4all.prompt(prompt2);
-  console.log(`Prompt: ${prompt2}`);
-  console.log(`Response: ${response2}`);
-  console.log("done 2");
-
-  // Close the connection when you're done
-  gpt4all.close();
+  return gpt4all;
 
   // say hello world
 };
@@ -118,22 +92,55 @@ const io = new Server(server);
 //   main().catch(console.error);
 // });
 
-app.get(["/", "/:name"], (req, res) => {
-  let greeting = "<h1>Hello From Node on Fly!</h1>";
-  let name = req.params["name"];
-  if (name) {
-    res.send(greeting + "</br>and hello to " + name);
-  } else {
-    res.send(greeting);
-  }
+let gpt4allProm = main();
+
+gpt4allProm.then((gpt4all) => {
+  let all = "";
+  // @ts-ignore
+  let onReceive = (buffer) => {
+    let string = buffer.toString();
+
+    all += string;
+    console.log(all);
+  };
+  gpt4all.bot.stdout.on("data", onReceive);
 });
 
-main().catch((r) => console.log(r));
+app.use(express.static("public"));
+
+// main().catch((r) => console.log(r));
 
 io.on("connection", (socket) => {
   console.log("a user connected");
 
-  socket.on("start", () => {
+  socket.on("prompt", async (data) => {
+    //
+
+    let prompt = data.prompt;
+    let gpt4all = await gpt4allProm;
+
+    //
+    let all = "";
+    // @ts-ignore
+    let onReceive = (buffer) => {
+      let string = buffer.toString();
+      let arr = all.split("\n");
+      if (arr.indexOf(">") === arr.length - 1) {
+      } else {
+        all = `${all}${string}`;
+      }
+
+      socket.emit("message", {
+        id: data.id,
+        msg: all
+          .replace(`\u001b[1m\u001b[32m\u001b[0m`, "")
+          .replace(`\u001b[0m`, ""),
+      });
+    };
+    gpt4all.bot.stdout.on("data", onReceive);
+    await gpt4all.prompt(prompt);
+    gpt4all.bot.stdout.off("data", onReceive);
+
     //
   });
 });

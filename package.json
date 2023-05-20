@@ -4,8 +4,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "ts-node yo.ts  --project .",
-    "dev2": "browserify frontend.js -o frontend-bundle.js",
+    "dev": "concurrently \"npm run dev0\" \"npm run dev1\"",
+    "devz": "nodemon --exec \"npm run dev1\" ./server.js --ignore public/",
+    "dev0": "nodemon --exec \"npm run dev2\" ./frontend.js --ignore public/",
+    "dev1": "ts-node yo.ts  --project .",
+    "dev2": "browserify frontend.js -o ./public/out/frontend-bundle.js --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node yo.ts  --project .",
     "deploy": "fly deploy"
@@ -24,13 +27,16 @@
     "express": "^4.17.1",
     "gpt4all": "^1.0.0",
     "progress": "^2.0.3",
-    "socket.io": "^4.6.1"
+    "socket.io": "^4.6.1",
+    "socket.io-client": "^4.6.1"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.2.5",
     "@types/node": "^20.2.0",
     "@types/progress": "^2.0.5",
     "axios": "^1.4.0",
+    "concurrently": "^8.0.1",
+    "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.1",
     "typescript": "^5.0.4"
