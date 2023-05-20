@@ -48,6 +48,13 @@ const main = async (myPrompt = "how are you", res) => {
 
   let hasFile = false;
   try {
+    const dir = new URL(`file://${path.join(__dirname, "./model")}`);
+    await fs.mkdir(dir, { recursive: true }, (err) => {
+      if (err) {
+        throw err;
+      }
+    });
+
     hasFile = fs.existsSync(modelPath);
   } catch (e) {
     console.log(e);
