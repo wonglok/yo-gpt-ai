@@ -44,7 +44,7 @@ var util_1 = require("util");
 var child_process_1 = require("child_process");
 var fs = require("fs");
 var axios_1 = require("axios");
-var progress_1 = require("progress");
+// import ProgressBar from "progress";
 var main = function (myPrompt, res) {
     if (myPrompt === void 0) { myPrompt = "how are you"; }
     return __awaiter(void 0, void 0, void 0, function () {
@@ -88,7 +88,7 @@ var main = function (myPrompt, res) {
                     }
                     if (!!hasFile) return [3 /*break*/, 5];
                     download = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-                        var _a, data, headers, totalSize, progressBar, dir, writer, currentAccu;
+                        var _a, data, headers, totalSize, dir, writer, currentAccu;
                         return __generator(this, function (_b) {
                             switch (_b.label) {
                                 case 0: return [4 /*yield*/, axios_1.default.get(url, {
@@ -97,12 +97,6 @@ var main = function (myPrompt, res) {
                                 case 1:
                                     _a = _b.sent(), data = _a.data, headers = _a.headers;
                                     totalSize = parseInt(headers["content-length"], 10);
-                                    progressBar = new progress_1.default("[:bar] :percent :etas", {
-                                        complete: "=",
-                                        incomplete: " ",
-                                        width: 20,
-                                        total: totalSize,
-                                    });
                                     dir = new URL("file://".concat(path.join(__dirname, "./model")));
                                     return [4 /*yield*/, fs.mkdir(dir, { recursive: true }, function (err) {
                                             if (err) {
@@ -114,7 +108,7 @@ var main = function (myPrompt, res) {
                                     writer = fs.createWriteStream(modelPath);
                                     currentAccu = 0;
                                     data.on("data", function (chunk) {
-                                        progressBar.tick(chunk.length);
+                                        // progressBar.tick(chunk.length);
                                         currentAccu += chunk.length;
                                         console.log("donwnloading..." + ((currentAccu / totalSize) * 100).toFixed(2) + "%");
                                     });
