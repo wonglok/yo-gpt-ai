@@ -7,7 +7,7 @@ import { promisify } from "util";
 import { exec, spawn } from "child_process";
 import * as fs from "fs";
 import axios from "axios";
-import ProgressBar from "progress";
+// import ProgressBar from "progress";
 
 const main = async (myPrompt = "how are you", res) => {
   // Instantiate GPT4All with default or custom settings
@@ -58,12 +58,12 @@ const main = async (myPrompt = "how are you", res) => {
         responseType: "stream",
       });
       const totalSize = parseInt(headers["content-length"], 10);
-      const progressBar = new ProgressBar("[:bar] :percent :etas", {
-        complete: "=",
-        incomplete: " ",
-        width: 20,
-        total: totalSize,
-      });
+      // const progressBar = new ProgressBar("[:bar] :percent :etas", {
+      //   complete: "=",
+      //   incomplete: " ",
+      //   width: 20,
+      //   total: totalSize,
+      // });
 
       const dir = new URL(`file://${path.join(__dirname, "./model")}`);
       await fs.mkdir(dir, { recursive: true }, (err) => {
@@ -76,7 +76,7 @@ const main = async (myPrompt = "how are you", res) => {
 
       let currentAccu = 0;
       data.on("data", (chunk: any) => {
-        progressBar.tick(chunk.length);
+        // progressBar.tick(chunk.length);
         currentAccu += chunk.length;
         console.log(
           "donwnloading..." + ((currentAccu / totalSize) * 100).toFixed(2) + "%"
