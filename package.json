@@ -11,7 +11,7 @@
     "dev2": "browserify frontend.js -o ./public/out/frontend-bundle.js --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node yo.js",
-    "deploy": "fly deploy"
+    "deploy": "tsc yo.ts; fly deploy"
   },
   "repository": {
     "type": "git",
