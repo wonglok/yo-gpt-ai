@@ -22,6 +22,7 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link package.json ./
+RUN npm install ts-node typescript -g
 RUN npm install --frozen-lockfile --production=false
 
 # Copy application code
