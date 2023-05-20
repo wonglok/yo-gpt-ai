@@ -44,11 +44,11 @@ const main = async (myPrompt = "how are you", res) => {
 
   let modelPath = path.join(__dirname, "./model/gpt4all-lora-quantized.bin");
   let hasFile = false;
-  try {
-    hasFile = fs.existsSync(modelPath);
-  } catch (e) {
-    console.log(e);
-  }
+  // try {
+  //   hasFile = fs.existsSync(modelPath);
+  // } catch (e) {
+  //   console.log(e);
+  // }
   if (!hasFile) {
     let download = async (url) => {
       const { data, headers } = await axios.get(url, {
