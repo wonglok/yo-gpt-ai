@@ -96,9 +96,9 @@ const main = async (myPrompt = "how are you", res) => {
     //   modelPath
     // );
 
-    await download(
-      `https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin`
-    );
+    // await download(
+    //   `https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin`
+    // );
   }
 
   // @ts-ignore
