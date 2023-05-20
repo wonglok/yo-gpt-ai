@@ -43,6 +43,8 @@ var os = require("os");
 var util_1 = require("util");
 var child_process_1 = require("child_process");
 var fs = require("fs");
+var axios_1 = require("axios");
+var ProgressBar = require("progress");
 var main = function (myPrompt, res) {
     if (myPrompt === void 0) { myPrompt = "how are you"; }
     return __awaiter(void 0, void 0, void 0, function () {
@@ -89,7 +91,7 @@ var main = function (myPrompt, res) {
                         var _a, data, headers, totalSize, progressBar, dir, writer;
                         return __generator(this, function (_b) {
                             switch (_b.label) {
-                                case 0: return [4 /*yield*/, axios.get(url, {
+                                case 0: return [4 /*yield*/, axios_1.default.get(url, {
                                         responseType: "stream",
                                     })];
                                 case 1:
@@ -109,7 +111,7 @@ var main = function (myPrompt, res) {
                                         })];
                                 case 2:
                                     _b.sent();
-                                    writer = fs.createWriteStream(destination);
+                                    writer = fs.createWriteStream(modelPath);
                                     data.on("data", function (chunk) {
                                         progressBar.tick(chunk.length);
                                     });
@@ -182,16 +184,6 @@ var io = new Server(server);
 //   main().catch(console.error);
 // });
 var gpt4allProm = main().catch(console.error);
-gpt4allProm.then(function (gpt4all) {
-    var all = "";
-    // @ts-ignore
-    var onReceive = function (buffer) {
-        var string = buffer.toString();
-        all += string;
-        console.log(all);
-    };
-    gpt4all.bot.stdout.on("data", onReceive);
-});
 app.use(express.static("public"));
 // main().catch((r) => console.log(r));
 io.on("connection", function (socket) {

@@ -6,6 +6,8 @@ import * as os from "os";
 import { promisify } from "util";
 import { exec, spawn } from "child_process";
 import * as fs from "fs";
+import axios from "axios";
+import ProgressBar from "progress";
 
 const main = async (myPrompt = "how are you", res) => {
   // Instantiate GPT4All with default or custom settings
@@ -43,6 +45,7 @@ const main = async (myPrompt = "how are you", res) => {
   }
 
   let modelPath = path.join(__dirname, "./model/gpt4all-lora-quantized.bin");
+
   let hasFile = false;
   try {
     hasFile = fs.existsSync(modelPath);
@@ -61,6 +64,7 @@ const main = async (myPrompt = "how are you", res) => {
         width: 20,
         total: totalSize,
       });
+
       const dir = new URL(`file://${path.join(__dirname, "./model")}`);
       await fs.mkdir(dir, { recursive: true }, (err) => {
         if (err) {
@@ -68,10 +72,15 @@ const main = async (myPrompt = "how are you", res) => {
         }
       });
 
-      const writer = fs.createWriteStream(destination);
+      const writer = fs.createWriteStream(modelPath);
 
+      let currentAccu = 0;
       data.on("data", (chunk: any) => {
         progressBar.tick(chunk.length);
+        currentAccu += chunk.length;
+        console.log(
+          "donwnloading..." + ((currentAccu / totalSize) * 100).toFixed(2) + "%"
+        );
       });
 
       data.pipe(writer);
@@ -135,18 +144,6 @@ const io = new Server(server);
 // });
 
 let gpt4allProm = main().catch(console.error);
-
-gpt4allProm.then((gpt4all) => {
-  let all = "";
-  // @ts-ignore
-  let onReceive = (buffer) => {
-    let string = buffer.toString();
-
-    all += string;
-    console.log(all);
-  };
-  gpt4all.bot.stdout.on("data", onReceive);
-});
 
 app.use(express.static("public"));
 
