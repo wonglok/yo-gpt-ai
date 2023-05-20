@@ -86,84 +86,79 @@ var main = function (myPrompt, res) {
                     catch (e) {
                         console.log(e);
                     }
-                    if (!!hasFile) return [3 /*break*/, 5];
-                    download = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-                        var _a, data, headers, totalSize, dir, writer, currentAccu;
-                        return __generator(this, function (_b) {
-                            switch (_b.label) {
-                                case 0: return [4 /*yield*/, axios_1.default.get(url, {
-                                        responseType: "stream",
-                                    })];
-                                case 1:
-                                    _a = _b.sent(), data = _a.data, headers = _a.headers;
-                                    totalSize = parseInt(headers["content-length"], 10);
-                                    dir = new URL("file://".concat(path.join(__dirname, "./model")));
-                                    return [4 /*yield*/, fs.mkdir(dir, { recursive: true }, function (err) {
-                                            if (err) {
-                                                throw err;
-                                            }
+                    if (!hasFile) {
+                        download = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+                            var _a, data, headers, totalSize, dir, writer, currentAccu;
+                            return __generator(this, function (_b) {
+                                switch (_b.label) {
+                                    case 0: return [4 /*yield*/, axios_1.default.get(url, {
+                                            responseType: "stream",
                                         })];
-                                case 2:
-                                    _b.sent();
-                                    writer = fs.createWriteStream(modelPath);
-                                    currentAccu = 0;
-                                    data.on("data", function (chunk) {
-                                        // progressBar.tick(chunk.length);
-                                        currentAccu += chunk.length;
-                                        console.log("donwnloading..." + ((currentAccu / totalSize) * 100).toFixed(2) + "%");
-                                    });
-                                    data.pipe(writer);
-                                    return [2 /*return*/, new Promise(function (resolve, reject) {
-                                            writer.on("finish", resolve);
-                                            writer.on("error", reject);
-                                        })];
+                                    case 1:
+                                        _a = _b.sent(), data = _a.data, headers = _a.headers;
+                                        totalSize = parseInt(headers["content-length"], 10);
+                                        dir = new URL("file://".concat(path.join(__dirname, "./model")));
+                                        return [4 /*yield*/, fs.mkdir(dir, { recursive: true }, function (err) {
+                                                if (err) {
+                                                    throw err;
+                                                }
+                                            })];
+                                    case 2:
+                                        _b.sent();
+                                        writer = fs.createWriteStream(modelPath);
+                                        currentAccu = 0;
+                                        data.on("data", function (chunk) {
+                                            // progressBar.tick(chunk.length);
+                                            currentAccu += chunk.length;
+                                            console.log("donwnloading..." + ((currentAccu / totalSize) * 100).toFixed(2) + "%");
+                                        });
+                                        data.pipe(writer);
+                                        return [2 /*return*/, new Promise(function (resolve, reject) {
+                                                writer.on("finish", resolve);
+                                                writer.on("error", reject);
+                                            })];
+                                }
+                            });
+                        }); };
+                        // await gpt4all.downloadFile(
+                        //   `https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin`,
+                        //   modelPath
+                        // );
+                        // await download(
+                        //   `https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin`
+                        // );
+                    }
+                    // @ts-ignore
+                    return [4 /*yield*/, fs.chmod(gpt4all.executablePath, 493, function (err) {
+                            if (err) {
+                                throw err;
                             }
-                        });
-                    }); };
-                    // await gpt4all.downloadFile(
-                    //   `https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin`,
-                    //   modelPath
-                    // );
-                    return [4 /*yield*/, download("https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin")];
+                        })];
                 case 4:
-                    // await gpt4all.downloadFile(
-                    //   `https://agape-appstore.s3.ap-southeast-1.amazonaws.com/model/gpt4all-lora-quantized.bin`,
-                    //   modelPath
-                    // );
-                    _a.sent();
-                    _a.label = 5;
-                case 5: 
-                // @ts-ignore
-                return [4 /*yield*/, fs.chmod(gpt4all.executablePath, 493, function (err) {
-                        if (err) {
-                            throw err;
-                        }
-                    })];
-                case 6:
                     // @ts-ignore
                     _a.sent();
                     // @ts-ignore
                     gpt4all.modelPath = modelPath;
                     // Initialize and download missing files
                     return [4 /*yield*/, gpt4all.init()];
-                case 7:
+                case 5:
                     // Initialize and download missing files
                     _a.sent();
                     console.log("starting");
-                    _a.label = 8;
-                case 8:
-                    _a.trys.push([8, 10, , 11]);
+                    _a.label = 6;
+                case 6:
+                    _a.trys.push([6, 8, , 9]);
                     // Open the connection with the model
                     return [4 /*yield*/, gpt4all.open()];
-                case 9:
+                case 7:
                     // Open the connection with the model
                     _a.sent();
-                    return [3 /*break*/, 11];
-                case 10:
+                    return [3 /*break*/, 9];
+                case 8:
                     e_1 = _a.sent();
                     console.log(e_1);
-                    return [3 /*break*/, 11];
-                case 11:
+                    return [3 /*break*/, 9];
+                case 9:
                     console.log("opened the app");
                     return [2 /*return*/, gpt4all];
             }
