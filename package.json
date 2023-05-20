@@ -10,7 +10,7 @@
     "dev1": "ts-node yo.ts  --project .",
     "dev2": "browserify frontend.js -o ./public/out/frontend-bundle.js --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node yo.ts  --project .",
+    "start": "node yo.js",
     "deploy": "fly deploy"
   },
   "repository": {
